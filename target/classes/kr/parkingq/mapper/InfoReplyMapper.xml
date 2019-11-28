@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.parkingq.mapper.InfoReplyMapper">
+
+<!-- <insert id="insert">
+	insert into infocomment(gno, no, content, nick)
+	values(seq_inforeply.nextval, #{no}, #{content}, #{nick})
+</insert> -->
+
+<insert id="insertSelectKey">
+		<selectKey keyProperty="gno" order="BEFORE"
+		resultType="int">
+			select max(gno)+1 from infocomment
+		</selectKey>
+		insert into infocomment
+		values(#{no},#{gno},#{id},#{nick},#{content},sysdate)
+	</insert>
+
+<select id="read" resultType="kr.parkingq.domain.infoboard.InfoReplyVO">
+	select * from infocomment where gno = #{gno}
+</select>
+
+<delete id="delete">
+	delete from infocomment where gno = #{gno}
+</delete>
+
+<update id="update">
+	update infocomment set content=#{content} where gno = #{gno}
+</update>
+
+<select id="getListWithPaging" resultType="kr.parkingq.domain.infoboard.InfoReplyVO">
+	select gno, no, id, nick, content, idate
+	from infocomment
+	where no = #{no}
+	order by gno asc
+</select>
+
+
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.parkingq.mapper.MessageMapper">
+
+	<!-- insert Message -->
+	<insert id="insertMessage">
+		<selectKey keyProperty="no" order="BEFORE" resultType="long">
+			select seq_message.nextval from dual
+		</selectKey>
+		insert into message(no, roomid, type,id, toid, content, read, mdate)
+		values(#{no}, #{roomId}, #{type}, #{id}, #{toId}, #{content}, 0, sysdate)
+	</insert>
+ 
+	<!-- get Message -->
+	<select id="getMessage" resultType="kr.parkingq.domain.message.MessageVO">
+		select message.no, message.type, message.id, message.content, message.read, 
+		to_char(message.mdate, 'MM-DD HH24:MI') as mdate, idfile.pfile as idfile from 
+		(    
+    		<![CDATA[
+    			select * from 
+    			(
+        			select * from message
+        			where ( ( id = #{id} AND toId = #{toId} ) OR ( id = #{toId} AND toId = #{id} ) )  order by no desc 
+    			) X
+    			where rownum <  6
+    		 ]]>
+		) message 
+		left join profile idfile
+		on message.id = idfile.id
+		order by message.no
+	</select>
+
+
+	<!-- check RoomId Value -->
+	<select id="checkRoomId" resultType="String">
+		select roomId from message
+		where ( id = #{id} and toId = #{toId} ) or ( id = #{toId} and toId = #{id}
+		)
+		group by roomId
+	</select>
+
+	<!-- make RoomId Value -->
+	<select id="getRoomId" resultType="Integer">
+		select seq_roomid.nextval from dual
+	</select>
+	
+	<!-- get Message List -->
+	<select id="getMessageList" resultType="kr.parkingq.domain.message.MessageVO">
+		select * from message
+		where no IN (select max(no) from message where id=#{id} or toId=#{id} group by roomid) 
+		order by no DESC
+	</select>
+	
+	<!--  get Message member List -->
+	<select id="getMessageMemberList" resultType="kr.parkingq.domain.message.MessageVO">
+		select message.roomId, message.type, message.id, message.toId, message.content, message.mDate,  nvl(unread.unReadCount,0) as read from
+        ( select * from message
+		where no IN (select max(no) from message where id=#{id} or toId=#{id} group by roomId) 
+		) message left join ( select roomId, count(no) unReadCount from message where  toId=#{id} and read = 0 group by roomId ) unread
+        on message.roomId = unread.roomId
+        order by message.mDate desc
+	</select>
+	
+	<!-- get Message Member Profile -->
+	<select id="getProfile" resultType="String">
+		select pfile from profile where id = #{id}
+	</select>
+	
+	<!-- set read Message -->
+	<update id="readMessage">
+		update message set read=1 where id=#{toId} and toId=#{id}
+	</update>
+	
+	<!-- delete Message -->
+	<delete id="deleteMessage">
+		delete from message where ( ( id = #{id} and toId = #{toId} ) or ( id = #{toId} and toId = #{id}  ) ) and type = 'normal'
+	</delete>
+	
+	<!-- check count unreadcount -->
+	<select id="getUnReadCount">
+		select count(*) as unReadCount from message where toId=#{id}
+	</select>
+	
+	<!-- delete invite friend message -->
+	<delete id="deleteInviteMessage">
+		delete from message where no = #{no} and type = 'friend'
+	</delete>
+	
+	
+	<select id="getLike" resultType="int">
+		select count(*) from testlike where no=#{no} and id=#{id}
+	</select>
+	
+	
+	<insert id="addLike">
+		insert into testlike values(#{no}, #{id}, sysdate)
+	</insert>
+
+	<delete id="deleteLike">
+		delete from testlike where no=#{no} and id=#{id}
+	</delete>
+	
+	<select id="unReadCountById" resultType="int">
+		select count(*) as unReadCount from message where toid=#{id} and read=0
+	</select>
+	
+	
+
+</mapper>

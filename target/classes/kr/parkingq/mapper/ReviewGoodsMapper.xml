@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http:mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="kr.parkingq.mapper.ReviewGoodsMapper">
+	
+			<!-- 좋아요 -->
+		<select id="getGoods" resultType="int">
+			select count(*) from reviewlike where no=#{no} and id=#{id}
+		</select>
+		
+		<select id="goodsCount" resultType="int">
+			select count(*) from reviewlike where no=#{no}
+		</select>
+		
+		<insert id="addGoods">
+			insert into reviewlike(likeno, no, id, rdate)
+			values(seq_reviewgoods.nextval, #{no}, #{id}, sysdate)
+		</insert>
+	
+		<delete id="deleteGoods">
+			delete from reviewlike where no=#{no} and id=#{id}
+		</delete>
+		
+	</mapper>

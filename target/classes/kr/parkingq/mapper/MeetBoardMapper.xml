@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.parkingq.mapper.MeetBoardMapper">
+
+				<!-- Criteria Tag -->
+	<sql id="criteria">
+		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
+			<foreach item='type' collection="typeArr">
+				<trim prefix="OR">
+					<choose>
+						<when test="type == 'T'.toString()">
+							title like '%'||#{keyword}||'%'
+						</when>
+						<when test="type == 'C'.toString()">
+							content like '%'||#{keyword}||'%'
+						</when>
+						<when test="type == 'W'.toString()">
+							writer like '%'||#{keyword}||'%'
+						</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim>
+	</sql>
+
+
+
+
+<select id="getList" resultType="kr.parkingq.domain.meetboard.MeetBoardVO">
+	<![CDATA[
+	select * from meetboard
+	where no > 0
+	]]>
+</select>
+
+<insert id="insert">
+	insert meetboard(no, id, nick, mname, title, content, mdate)
+	values(seq_meetboard.nextval, #{id}, #{nick}, #{mname}, #{title}, #{content}, sysdate)
+</insert>
+
+<insert id="insertSelectKey">
+
+	insert all
+		into meetboard (no, id, nick, mname, title, content, mdate, mview)
+			values(seq_meetboard.nextval, #{id} , #{nick}, #{mname}, #{title}, #{content}, sysdate, 0)
+			
+		into meetfile(no, mfile)
+			values(seq_meetboard.currval, #{mfile})
+			
+		into meetlocation(no, lat, lng)
+			values(seq_meetboard.currval, #{lat}, #{lng})
+			
+		into groupmember
+			values(seq_meetboard.currval, #{id}, sysdate)
+		
+		into alarm(no, ano, id, type, subject, adate)
+			values(seq_alarm.nextval, seq_meetboard.currval, #{id}, 'meetboard', #{mname}, sysdate)
+		
+	select * from dual
+	
+</insert>
+
+
+<select id="read" resultType="kr.parkingq.domain.meetboard.MeetBoardVO">
+	
+	select
+		meetboard.*, meetfile.mfile, meetlocation.lat, meetlocation.lng, (meetlike.id) as likeID
+	from meetboard
+		left join meetfile
+		on meetboard.no = meetfile.no
+		left join meetlocation
+		on meetboard.no = meetlocation.no
+		left join (select no, id from meetlike where id=#{id})meetlike
+		on meetboard.no = meetlike.no
+	where
+		meetboard.no=#{no}
+	
+</select>
+
+<select id="getListWithPaging" resultType="kr.parkingq.domain.meetboard.MeetBoardVO">
+	<![CDATA[
+		select
+			meetboard.no, meetboard.nick, meetboard.mname, meetboard.title, meetboard.content, meetboard.mdate, meetboard.mview, meetfile.mfile, profile.pfile,
+			nvl(meetlike.mlike, 0) as mlike,
+			nvl(groupmember.gmember, 0) as gmember,
+			nvl(groupcomment.greply, 0) as greply
+			
+		from
+			(
+			select /*+INDEX_DESC(meetboard pk_meetboard) */
+				rownum rn, no, id, nick, mname, title, content, mdate, mview
+			from
+				meetboard
+			where
+	]]>
+	
+	<include refid="criteria"></include>
+	
+	<![CDATA[
+		rownum <= #{pageNum} * #{amount}
+		)meetboard
+		left join meetfile
+		on meetboard.no = meetfile.no
+		left join profile
+		on meetboard.id = profile.id
+		left join (select no, count(*) as mlike from meetlike group by no) meetlike
+		on meetboard.no = meetlike.no
+		left join (select no, count(*) as gmember from groupmember group by no) groupmember
+		on meetboard.no = groupmember.no
+		left join (select no, count(*) as greply from groupcomment group by no) groupcomment
+		on meetboard.no = groupcomment.no
+		
+		where rn > (#{pageNum} -1) * #{amount}
+
+		order by no desc
+	]]>
+	
+</select>
+
+<!-- total count  -->
+<select id="getTotalCount" resultType="int">
+	select count(*)
+	from meetboard
+	where 
+	<include refid="criteria"></include>
+		no > 0
+</select>
+
+<!-- Group info delete -->
+<delete id="delete">
+	delete meetboard where no = #{no}
+</delete>
+
+<!-- Image info delete -->
+<delete id="fileDelete">
+	delete meetfile where no = #{no}
+</delete>
+
+<!-- Google map Location info delete -->
+<delete id="LocationDelete">
+	delete meetlocation where no = #{no}
+</delete>
+
+<!-- Group Info update -->
+<update id="update">
+    update meetboard
+    set mname=#{mname},
+    title=#{title},
+    content=#{content}
+    where no = #{no}
+</update>
+
+<!-- Group image update -->
+<update id="fileUpdate">
+	update meetfile
+	set mfile=#{mfile}
+	where no=#{no}
+</update>
+
+<!-- Group map update -->
+<update id="mapUpdate">
+	update meetlocation
+	set lat=#{lat},
+	lng=#{lng}
+	where no=#{no}
+</update>
+
+<update id="updateMeetfile">
+	update meetfile set mfile=#{mfile} where no=#{no}
+</update>
+
+<!-- Group Member resultNum get -->
+<select id="getJoin" resultType="int">
+	select count(*) from groupmember where no=#{no} and id=#{id}
+</select>
+
+<!-- Group user insert -->
+<insert id="insertJoin">
+	insert into groupmember values(#{no}, #{id}, sysdate)
+</insert>
+
+<!-- Group user delete -->
+<delete id="deleteJoin">
+	delete from groupmember where no=#{no} and id=#{id}
+</delete>
+
+<!-- Group join count -->
+<select id="countJoin" resultType="int">
+	select count(id) from groupmember where no = #{no}
+</select>
+
+<!-- Board Like resultNum get -->
+<select id="getLike" resultType="int">
+	select count(*) from meetlike where no=#{no} and id=#{id}
+</select>
+
+<!-- Board Like insert -->
+<insert id="insertLike">
+	insert into meetlike values(#{no}, #{id}, sysdate)
+</insert>
+
+<!-- Board Like delete -->
+<delete id="deleteLike">
+	delete from meetlike where no=#{no} and id=#{id}
+</delete>
+
+<!-- Board Like count -->
+<select id="countLike" resultType="int">
+	select count(id) from meetlike where no = #{no}
+</select>
+
+<!-- Board view count -->
+<update id="boardCount">
+	update meetboard
+	set mview = nvl(mview, 0)+1
+	where no = #{no}
+</update>
+
+
+</mapper>

@@ -1,0 +1,195 @@
+@charset "UTF-8";
+
+#message_container {
+	width: 400px;
+	height: 600px;
+}
+
+#message_body {
+	height: 500px;
+	overflow-y: scroll;
+}
+
+#message_footer {
+	height: 60px;
+}
+
+#memberList_footer {
+	height: 60px;
+	padding: 0;
+}
+
+#message_input {
+	width: 280px;
+	height: 35px;
+	border: 1px solid #d6d6d6;
+	padding-left: 15px;
+}
+
+#meesage_btn {
+	height: 40px;
+	text-align: center;
+}
+
+#message_img {
+	width: 40px;
+	height: 40px
+}
+
+#message_time {
+	font-size: 12px;
+}
+
+#message_list {
+	height: 500px;
+	width: 200px;
+	overflow-y: scroll;
+}
+
+.message_listimage {
+	width: 70px;
+	height: 70px;
+	cursor: pointer;
+}
+
+.message_profile {
+	position: relative;
+}
+
+#message_state {
+	width: 20px;
+	height: 20px;
+	border-radius: 20px;
+	position: absolute;
+	left: 1.5%;
+	top: 30%;
+}
+
+.background_red {
+	background-color: red;
+}
+
+.background_green {
+	background-color: green;
+}
+
+.background_black {
+	background-color: black;
+}
+
+#message_readcount {
+	width: 20px;
+	height: 20px;
+	border-radius: 20px;
+	background-color: red;
+	position: absolute;
+	left: 36%;
+	top: 78%;
+}
+
+#message_readtext {
+	position: absolute;
+	left: 30%;
+	bottom: -6%;
+	font-weight: bold;
+	color: white;
+}
+
+.message_alarm {
+	position: absolute;
+	top: 18px;
+	left: 48px;
+	color: royalblue;
+	font-weight: bold;
+	font-size: 14px;
+}
+
+#message_line {
+	border-bottom: 1px solid #dddddd;
+	padding-bottom: 20px;
+}
+
+#message_id {
+	visibility: hidden;
+	width: 0;
+	height: 0;
+}
+
+#message_listtitle {
+	text-align: center;
+}
+
+#message_listtitle>i {
+	float: right;
+	margin-top: 5px;
+	cursor: pointer;
+}
+
+input[type='text'] , input[type='mail'], input[type='password'] {
+	padding: 5px 0px 5px 20px;
+	border-radius: 10px;
+}
+
+#successMessage, #warningMessage, #dangerMessage {
+	z-index: 9999;
+}
+
+.fas {
+	float: right;
+}
+
+.fa-trash-alt {
+	position: absolute;
+	font-size: 1.6rem;
+	left: 43%;
+	bottom: 3%;
+}
+
+.fa-search {
+	cursor: pointer;
+	margin-top: 1%;
+	margin-right: 2%;
+}
+
+.fa-user-plus {
+	cursor: pointer;
+	margin-right: 4%;
+	margin-top: 1%;
+	font-size: 1.2rem;
+}
+
+div#message_rotate {
+	position: absolute;
+	width: 1.8rem;
+	height: 1.8rem;
+	left: 65%;
+	top: 1.8%;
+	background-color: #929189;
+}
+
+.alert {
+	position: absolute;
+	left: 36%;
+	margin-top: 15%;
+	width: 30%;
+	text-align: center;
+}
+
+#message_modal_layout, #memberModal, #qr_modal_layout {
+	top: 10%;
+}
+
+#searchModal, #friendModal {
+	top: 25%;
+	left: 11%;
+}
+
+#passwordModal{
+    top: 20%;
+    left: 7%;
+}
+
+img#friend_img {
+    width: 20%;
+    margin-bottom: 4%;
+}

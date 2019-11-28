@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.parkingq.mapper.InfoBoardMapper">
+
+	<insert id="insertSelectKey">
+		<selectKey keyProperty="no" order="BEFORE"
+		resultType="int">
+			select max(no)+1 from infoboard
+		</selectKey>
+		insert into infoboard
+		values(#{no},#{id},#{nick},#{title},#{content},sysdate,#{spot})
+	</insert>
+	
+	 <!-- <sql id="criteria">
+	      spot like '%'||#{keyword}||'%' or
+	</sql>  -->
+		
+	<select id="getListWithPaging" resultType="kr.parkingq.domain.infoboard.InfoBoardVO">
+	<![CDATA[
+		select no, spot, title, nick, idate
+		from (select /*+index_desc(infoboard PK_infoboard)*/
+		 	  rownum rn, no, spot, title, nick, idate 
+		 	  from infoboard
+			  where 
+			  ]]>
+			  <!-- 지역명 검색 시 DB처리 추가되는 코드 -->
+			   <if test="keyword != null">
+			   spot like '%'||#{keyword}||'%' and
+			   </if>
+
+	 		 <![CDATA[
+			  rownum <= #{pageNum} * #{amount})
+		where rn > (#{pageNum} -1) * #{amount}		
+		]]>
+	</select>
+	
+	<select id="read" resultType="kr.parkingq.domain.infoboard.InfoBoardVO">
+		select * from infoboard where no = #{no}
+	</select>
+	
+	<update id="update">
+		update infoboard
+		set title=#{title},
+			content=#{content},
+			nick=#{nick},
+			spot=#{spot}
+			where no = #{no}
+	</update>
+	<delete id="delete">
+		delete infoboard where no = #{no}
+	</delete>
+
+
+	<select id="getLike" resultType="int">
+		select count(*) from infolike where no=#{no} and id=#{id}
+	</select>
+	
+	<insert id="addLike">
+		insert into infolike values(#{no}, #{id}, sysdate)
+	</insert>
+	
+	<delete id="deleteLike">
+		delete from infolike where id=#{id} and no=#{no}
+	</delete>
+
+	<select id="checkLike" resultType="int">
+		select count(*) from infolike where no=#{no}
+	</select>
+
+	<insert id="addMap">
+		insert into infolocation values(#{no}, #{lat}, #{lng})
+	</insert>
+	
+	<select id="getMap" resultType="kr.parkingq.domain.infoboard.InfoBoardVO">
+		select * from infolocation where no=#{no}
+	</select>
+	
+	<update id="updateMap">
+	 update infolocation set lat=#{lat}, lng=#{lng} where no=#{no}
+	</update>
+
+
+
+
+</mapper>

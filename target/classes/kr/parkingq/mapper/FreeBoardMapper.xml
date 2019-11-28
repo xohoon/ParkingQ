@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 자유게시판 쿼리문 mapper -->
+<mapper namespace="kr.parkingq.mapper.FreeBoardMapper">
+
+
+<!-- sql태그로 쿼리 저장 -->
+<sql id="Criteria">
+	<trim prefix="(" suffix=") AND " prefixOverrides="OR">
+   		<foreach item='type' collection="typeArr">
+        	<trim prefix="OR">
+          		<choose>
+          			<when test="type == 'T'.toString()">
+          				title like '%'||#{keyword}||'%'
+          			</when>
+          			 <when test="type == 'C'.toString()">
+          				content like '%'||#{keyword}||'%'
+          			</when>
+          			<when test="type == 'W'.toString()">
+          				id like '%'||#{keyword}||'%'
+          			</when>
+          		</choose>
+      		</trim>
+      	</foreach>          
+   </trim>
+</sql>
+
+	<!-- 글목록 -->
+	<select id="getListWithPaging"
+		resultType="kr.parkingq.domain.freeboard.FreeBoardVO">
+   		 <![CDATA[
+		select freeboard.no, freeboard.id, freeboard.title, freeboard.freadcount, freeboard.lev, 
+				freeboard.ref, freeboard.seq, freeboard.fdate ,nvl(freelike.flike,0) as flike ,
+				freeboard.replycnt, profile.pfile as profile
+		from ( select * 
+			   from	 ( select rownum as rnum, X.* 
+			   		   from ( select * from freeboard order by no desc ) X
+         	   where
+          ]]>
+        		<include refid="Criteria"></include> 
+        <![CDATA[
+          			 rownum <= #{pageNum} * #{amount} ) Y
+   	    where Y.rnum > (#{pageNum}-1)* #{amount} ) freeboard
+
+		left join (select no, count(*) as flike from freelike group by no) freelike
+		on freeboard.no = freelike.no
+		left join (select id,pfile from profile) profile
+		on freeboard.id = profile.id
+		order by ref desc, seq asc
+		]]>
+	</select>
+	<select id="getBestList5" resultType="kr.parkingq.domain.freeboard.FreeBoardVO">
+		<![CDATA[
+		select freeboard.no, freeboard.id, freeboard.title, freeboard.freadcount,
+				freeboard.fdate ,nvl(freelike.flike,0) as flike, freefile.ffile
+		from freeboard freeboard 
+		left join(select rownum rn, Y.*
+                  from (select * 
+                        from (select no, count(id) as flike 
+                              from freelike group by no) X
+                              order by flike desc) Y 
+                        where rownum < 6
+                 ) freelike
+		on freeboard.no = freelike.no
+		left join freefile
+		on freeboard.no = freefile.no
+		where rn<=5
+		order by flike desc
+		]]>
+	</select>
+	<select id="bestList" resultType="kr.parkingq.domain.freeboard.FreeBoardVO">
+		<![CDATA[
+		select freeboard.no, freeboard.id, freeboard.title, freeboard.freadcount,
+				freeboard.fdate ,nvl(freelike.flike,0) as flike, freefile.ffile
+				,profile.pfile as profile
+		from freeboard freeboard 
+		left join(select rownum rn, Y.*
+                  from (select * 
+                        from (select no, count(id) as flike 
+                              from freelike group by no) X
+                              order by flike desc) Y 
+                        where rownum < 4
+                 ) freelike
+		on freeboard.no = freelike.no
+		left join freefile
+		on freeboard.no = freefile.no
+		left join (select id,pfile from profile) profile
+		on freeboard.id = profile.id
+
+		where rn<=3
+		order by flike desc
+		]]>
+	</select>
+	
+	<!-- 글등록 -->
+ 	<insert id="insertSelectKey">
+ 		<selectKey keyProperty="no" order="BEFORE" resultType="long">
+ 			select seq_freeboard.nextval from dual
+ 		</selectKey>
+ 		insert all
+ 			into freeboard (no,id,nick,title,content,ref,fdate)
+ 			values (#{no}, #{id}, #{nick}, #{title}, #{content},#{no},sysdate)
+ 			
+ 			into freefile (no, ffile)
+ 			values (#{no}, #{ffile})
+		select * from dual 
+	</insert>
+	
+	<!-- 답글 등록 -->
+	<insert id="insertRewrite">
+		insert into freeboard (no,id,nick,title,content,ref,lev,seq,fdate)
+ 		values (seq_freeboard.nextval, #{id}, #{nick}, #{title}, #{content},#{ref},
+ 		#{lev}+1,#{seq}+1,sysdate)
+	</insert>
+
+	<update id="checkSeq">
+		<![CDATA[
+		update freeboard set seq = seq+1 where ref = #{ref} AND #{seq} < seq
+		]]>
+	</update>
+
+	<!-- 글조회 -->
+	<select id="read"
+		resultType="kr.parkingq.domain.freeboard.FreeBoardVO">
+		select freeboard.*, freefile.ffile ,(freelike.id) as likeId
+		from freeboard
+		left join freefile
+		on freeboard.no = freefile.no
+		left join (select no, id from freelike where id=#{id}) freelike
+		on freeboard.no = freelike.no
+		where freeboard.no = #{no}
+	</select>
+	
+	<update id="updateReadCnt">
+		update freeboard set freadcount = freadcount+1 where no = #{no}
+	</update>
+
+	<!-- 글삭제 -->
+	<delete id="delete">
+		delete freeboard where no = #{no}
+	</delete>
+
+	<!-- 글수정 -->
+	<update id="update">
+		update freeboard set
+		title = #{title},
+		content =#{content},
+		fdate = sysdate
+		where no = #{no}
+	</update>
+	
+	<!-- 전체 게시물 구하기-->
+	<select id="getTotalCount" resultType="int">
+		select count(*) from freeboard where
+		 <include refid="Criteria"></include>
+		 no > 0
+	</select>
+	
+	<!-- 댓글 갯수 구하기 -->
+	<update id="updateReplyCnt">
+		update freeboard set replycnt = replycnt + #{amount} where no = #{no}
+	</update>
+	
+	<!-- 좋아요 -->
+	<select id="getLike" resultType="int">
+		select count(*) from freelike where no=#{no} and id=#{id}
+	</select>
+	
+	<insert id="addLike">
+		insert into freelike values(#{no}, #{id}, sysdate)
+	</insert>
+
+	<delete id="deleteLike">
+		delete from freelike where no=#{no} and id=#{id}
+	</delete>
+
+	<!-- 업로드된 파일가져오기 -->
+	<select id="getFile" resultType="kr.parkingq.domain.freeboard.FreeFileVO">
+		select * from freefile where no=#{no}
+	</select>
+
+	<!-- 현재시간 가져오기 -->
+	<select id="selectDate" resultType="String">
+		select to_char(SYSDATE, 'YYYY.MM.DD HH24:MI:SS')
+		from dual
+	</select>
+
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+    
+<mapper namespace="kr.parkingq.mapper.FreeCommentMapper">
+
+	<!-- comment insert -->
+	<insert id="insert">
+	
+		insert into freecomment (gno,no,content,id,nick,fdate)
+		values (seq_freecomment.nextval, #{no}, #{content}, #{id}, #{nick}, sysdate)
+	
+	</insert>
+
+<!-- comment read -->
+	<select id="read" resultType="kr.parkingq.domain.freeboard.FreeCommentVO">
+	 
+		select * from freecomment where gno = #{gno}
+		
+	</select>
+
+<!--comment delete  -->
+	<delete id="delete"> 
+	
+		delete from freecomment where gno = #{gno}
+	
+	</delete>
+
+<!-- comment update -->
+
+	<update id="update">
+	
+		update freecomment set content = #{content}
+		where gno = #{gno} 
+	
+	</update>
+
+<!-- comment list -->
+
+<!-- 	<select id="getListWithPaging" resultType="kr.parkingq.domain.freeboard.FreeCommentVO">
+	
+		select no, gno, id, nick, content, fdate
+		from freecomment
+		where no = #{no}
+		order by gno asc
+	
+	</select>	 -->
+	
+	<!-- comment paging -->
+	<select id="getListWithPaging" resultType="kr.parkingq.domain.freeboard.FreeCommentVO">
+	
+		<![CDATA[
+			select gno, no, content, id, fdate
+			from (
+					select /*+INDEX(freecomment idx_comment) */
+						rownum rn, gno, no, content, id, fdate
+					from freecomment
+					where no = #{no}
+					and gno > 0
+					and rownum <= #{cri.pageNum} * #{cri.amount}
+					) where rn > (#{cri.pageNum} -1) * #{cri.amount}
+		]]>
+	
+	</select>
+	
+	<select id="getCountByNo" resultType="int">
+		<![CDATA[
+			select count(gno) from freecomment where no = #{no}
+		]]>
+	</select>
+
+</mapper>
+    
+    
+    
+    
+    
+    

@@ -1,0 +1,165 @@
+@charset "UTF-8";
+
+.switch {
+	position: relative;
+	display: inline-block;
+	width: 60px;
+	height: 34px;
+}
+
+.switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	-webkit-transition: .4s;
+	transition: .4s;
+}
+
+.slider:before {
+	position: absolute;
+	content: "";
+	height: 26px;
+	width: 26px;
+	left: 4px;
+	bottom: 4px;
+	background-color: white;
+	-webkit-transition: .4s;
+	transition: .4s;
+}
+
+input:checked+.slider {
+	background-color: #2196F3;
+}
+
+input:focus+.slider {
+	box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+	-webkit-transform: translateX(26px);
+	-ms-transform: translateX(26px);
+	transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+	border-radius: 34px;
+}
+
+.slider.round:before {
+	border-radius: 50%;
+}
+
+.btn-googleplus {
+	color: #ffffff !important;
+	background-color: #dd4b39 !important;
+}
+
+.waves-effect {
+	position: relative;
+	cursor: pointer;
+	display: inline-block;
+	overflow: hidden;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-tap-highlight-color: transparent;
+	vertical-align: middle;
+	z-index: 1;
+	will-change: opacity, transform;
+	-webkit-transition: all 0.3s ease-out;
+	transition: all 0.3s ease-out;
+}
+
+.btn-facebook {
+	color: #ffffff !important;
+	background-color: #3b5998 !important;
+}
+
+.table td, .table th {
+	padding: 0.65rem;
+	vertical-align: middle;
+}
+
+.fa-times, fa-user-edit {
+	margin-left: 8px;
+	margin-right: 8px;
+	cursor: pointer;
+}
+
+.fa-user-edit {
+	margin-left: 12px;
+	cursor: pointer;
+}
+
+.admin_search{
+	margin: 15px 0 15px 0px;
+}
+
+.modal_membertext, .modal_boardtext{
+    display: block;
+    width: auto;
+}
+.modal_memberinput, .modal_boardinput{
+    width: 354px;
+}
+
+#admin_memberModal{
+    margin-top: 134px;
+}
+
+admin_boardModal{
+	margin-top: 50px;
+}
+
+#admin_memberId, #admin_memberQr, #admin_memberMDate
+#admin_boardANo, #admin_boardId, #admin_boardNick, #admin_boardADate{
+	background-color: #f5f5f5;
+}
+
+#admin_updateBoardInfo{
+	display: block;
+    width: 86%;
+}
+
+#admin_boardContent{
+	height: 200px;
+	border-radius: 10px;
+}
+
+#admin_changeQrBtn{
+	margin-left: 100px;
+}
+
+.admin_total{
+	margin-top: 40px;
+}
+
+.admin_total_text{
+	font-weight: bold;
+}
+.admin_total_value{
+	font-weight: bold;
+	color: red;
+}
+
+#admin_boardContent{
+	padding: 5px 0px 5px 20px;
+	border-radius: 10px;
+}
+
+.admin_main_icon{
+    margin-top: 3px;
+    margin-right: 13px;	
+}

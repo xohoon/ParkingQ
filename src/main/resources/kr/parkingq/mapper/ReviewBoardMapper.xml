@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="kr.parkingq.mapper.ReviewBoardMapper">
+  
+  	<!--get List  -->
+<!--   	<select id="getList" resultType="kr.parkingq.domain.reviewboard.ReviewBoardVO">
+  		<![CDATA[
+  			select * from reviewboard where no>0
+  		]]>
+  	</select> -->
+  	
+  	<!--insert  -->
+  	<insert id="insert">
+  		insert into reviewboard(no, id, nick, title, content)
+  		values(seq_board.nextval, #{id}, #{nick}, #{title}, #{content})
+  	</insert>
+  	
+  	<!--insertSelectKey  -->
+  	<insert id="insertSelectKey">
+  		
+  		<selectKey keyProperty="no" order="BEFORE" resultType="long">
+  			select seq_reviewboard.nextval from dual
+  		</selectKey>
+	
+		insert all
+		into reviewboard(no, id, nick, title, content)
+		values(#{no}, #{id}, #{nick}, #{title}, #{content})
+	
+		into reviewfile(no, rfile)
+		values(seq_reviewboard.currval, #{rfile})
+	
+		into reviewscore(no, avg, appavg, goodavg, reavg)
+		values(seq_reviewboard.currval, round(((#{appavg}*20)+ (#{goodavg}*20)+ (#{reavg}*20))/3, 0), #{appavg}, #{goodavg}, #{reavg})
+		
+		into alarm(no, ano, id, type, subject, adate)
+		values(seq_alarm.nextval, seq_reviewboard.currval, #{id}, 'reviewboard', #{title}, sysdate)
+		
+		select * from dual
+  	</insert>
+  	
+  	
+  	<!--select(insert)  -->
+  	<select id="read" resultType="kr.parkingq.domain.reviewboard.ReviewBoardVO">
+  		select * from reviewboard where no=#{no}
+  	</select>
+  	
+  	<!--delete  -->
+  	<delete id="delete">
+  		delete reviewboard where no=#{no}
+  	</delete>
+  	
+  	<delete id="deleteComment">
+  		delete from reviewcomment where gno=#{no}
+  	</delete>
+  		
+  	<!--update  -->
+  	<update id="update">
+  		update reviewboard set title=#{title}, content=#{content}, up_date=sysdate where no=#{no}
+  	</update>
+  	
+  	<!--getScore  -->
+  	<select id="getScore" resultType="kr.parkingq.domain.reviewboard.ReviewScoreVO">
+  		<![CDATA[
+	  		select nvl(round(allavg, 0),0) as "avg",
+            nvl((select count(appavg) from reviewscore where appavg=5),0) appavg5,
+            nvl((select round((select count(appavg) from reviewscore where appavg=5)/decode((SELECT count(appavg) from reviewscore),0,1,(SELECT count(appavg) from reviewscore))*100,0)
+            from dual),0) appavgscore5,
+            nvl((select count(appavg) from reviewscore where appavg=4),0) appavg4,
+            nvl((select round((select count(appavg) from reviewscore where appavg=4)/decode((SELECT count(appavg) from reviewscore),0,1,(SELECT count(appavg) from reviewscore))*100,0)
+            from dual),0) appavgscore4,
+            nvl((select count(appavg) from reviewscore where appavg=3),0) appavg3,
+            nvl((select round((select count(appavg) from reviewscore where appavg=3)/decode((SELECT count(appavg) from reviewscore),0,1,(SELECT count(appavg) from reviewscore))*100,0)
+            from dual),0) appavgscore3,
+            nvl((select count(appavg) from reviewscore where appavg=2),0) appavg2,
+            nvl((select round((select count(appavg) from reviewscore where appavg=2)/decode((SELECT count(appavg) from reviewscore),0,1,(SELECT count(appavg) from reviewscore))*100,0)
+            from dual),0) appavgscore2,
+            nvl((select count(appavg) from reviewscore where appavg=1),0) appavg1,
+            nvl((select round((select count(appavg) from reviewscore where appavg=1)/decode((SELECT count(appavg) from reviewscore),0,1,(SELECT count(appavg) from reviewscore))*100,0)
+            from dual),0) appavgscore1,
+            nvl((select count(goodavg) from reviewscore where goodavg=5),0) goodavg5,
+            nvl((select round((select count(goodavg) from reviewscore where goodavg=5)/decode((SELECT count(goodavg) from reviewscore),0,1,(SELECT count(goodavg) from reviewscore))*100,0)
+            from dual),0) goodavgscore5,
+            nvl((select count(goodavg) from reviewscore where goodavg=4),0) goodavg4,
+            nvl((select round((select count(goodavg) from reviewscore where goodavg=4)/decode((SELECT count(goodavg) from reviewscore),0,1,(SELECT count(goodavg) from reviewscore))*100,0)
+            from dual),0) goodavgscore4,
+            nvl((select count(goodavg) from reviewscore where goodavg=3),0) goodavg3,
+            nvl((select round((select count(goodavg) from reviewscore where goodavg=3)/decode((SELECT count(goodavg) from reviewscore),0,1,(SELECT count(goodavg) from reviewscore))*100,0)
+            from dual),0) goodavgscore3,
+            nvl((select count(goodavg) from reviewscore where goodavg=2),0) goodavg2,
+            nvl((select round((select count(goodavg) from reviewscore where goodavg=2)/decode((SELECT count(goodavg) from reviewscore),0,1,(SELECT count(goodavg) from reviewscore))*100,0)
+            from dual),0) goodavgscore2,
+            nvl((select count(goodavg) from reviewscore where goodavg=1),0) goodavg1,
+            nvl((select round((select count(goodavg) from reviewscore where goodavg=1)/decode((SELECT count(goodavg) from reviewscore),0,1,(SELECT count(goodavg) from reviewscore))*100,0)
+            from dual),0) goodavgscore1,
+            nvl((select count(reavg) from reviewscore where reavg=5),0) reavg5,
+            nvl((select round((select count(reavg) from reviewscore where reavg=5)/decode((SELECT count(reavg) from reviewscore),0,1,(SELECT count(reavg) from reviewscore))*100,0)
+            from dual),0) reavgscore5,
+            nvl((select count(reavg) from reviewscore where reavg=4),0) reavg4,
+            nvl((select round((select count(reavg) from reviewscore where reavg=4)/decode((SELECT count(reavg) from reviewscore),0,1,(SELECT count(reavg) from reviewscore))*100,0)
+            from dual),0) reavgscore4,
+            nvl((select count(reavg) from reviewscore where reavg=3),0) reavg3,
+            nvl((select round((select count(reavg) from reviewscore where reavg=3)/decode((SELECT count(reavg) from reviewscore),0,1,(SELECT count(reavg) from reviewscore))*100,0)
+            from dual),0) reavgscore3,
+            nvl((select count(reavg) from reviewscore where reavg=2),0) reavg2,
+            nvl((select round((select count(reavg) from reviewscore where reavg=2)/decode((SELECT count(reavg) from reviewscore),0,1,(SELECT count(reavg) from reviewscore))*100,0)
+            from dual),0) reavgscore2,
+            nvl((select count(reavg) from reviewscore where reavg=1),0) reavg1,
+            nvl((select round((select count(reavg) from reviewscore where reavg=1)/decode((SELECT count(reavg) from reviewscore),0,1,(SELECT count(reavg) from reviewscore))*100,0)
+            from dual),0) reavgscore1,
+            nvl((SELECT count(appavg) from reviewscore),0) as "appavgCount"
+            from (
+                select avg(avg) allavg
+                from (
+                    select avg 
+                    from reviewscore
+                    where avg>0)
+                )
+                ]]>
+  	</select>
+  	<select id="getMListWithGoodsPaging" resultType="kr.parkingq.domain.reviewboard.ReviewBoardVO">
+  		<![CDATA[
+			select reviewboard.no no, CASE WHEN length(reviewboard.title)>40 THEN lpad(reviewboard.title, 40) else reviewboard.title END  ||
+  			CASE WHEN length(reviewboard.title)>40 THEN ' ...' else null END title,
+  			lpad(reviewboard.id,3)||rpad('*',length(reviewboard.id)-3,'*') id
+			from 
+			    ( select * from 
+			        ( select rownum as rnum, X.* from 
+			            ( select * from reviewboard order by no desc ) X
+			          where rownum <= #{pageNum}*#{amount} ) Y
+			    where Y.rnum > (#{pageNum}-1)*#{amount} ) reviewboard
+			order by no desc
+  		]]>
+  	</select>
+  	
+  	
+  	<!--paging  -->
+  	<select id="getListWithPaging" resultType="kr.parkingq.domain.reviewboard.ReviewBoardVO">
+  		<![CDATA[
+  			
+			
+			select reviewboard.no, CASE WHEN length(reviewboard.content)>70 THEN lpad(reviewboard.content, 70) else reviewboard.content END  ||
+  			CASE WHEN length(reviewboard.content)>70 THEN ' ...' else null END content_close,
+  			reviewboard.content content,commentcount commentcount,
+  			lpad(reviewboard.id,3)||rpad('*',length(reviewboard.id)-3,'*') id,reviewboard.id realId,
+  			 reviewboard.title, reviewboard.rdate ,nvl(reviewlike.rlike,0) goods,
+  			 reviewfile.rfile rfile,(select count(no) as userLike from reviewlike 
+  			 where no=reviewboard.no and id like #{id} group by no) usergoods,
+             nvl(reviewscore.avg, 0) avg, nvl(reviewscore.appavg, 0) appavg, 
+             nvl(reviewscore.goodavg, 0) goodavg, nvl(reviewscore.reavg, 0) reavg
+			from 
+			    ( select * from 
+			        ( select rownum as rnum, X.* from 
+			            ( select * from reviewboard order by no desc ) X
+			          where rownum <= #{pageNum}*#{amount} ) Y
+			    where Y.rnum > (#{pageNum}-1)*#{amount} ) reviewboard
+			left join (select no, count(no) as rlike from reviewlike group by no) reviewlike
+			on reviewboard.no = reviewlike.no
+            left join (select no, avg, appavg, goodavg, reavg from reviewscore) reviewscore
+            on reviewboard.no = reviewscore.no
+			left join reviewfile reviewfile
+            on reviewboard.no = reviewfile.no
+            left join (select gno, count(no) as commentcount from reviewcomment group by gno)  reviewcomment
+            on reviewboard.no = reviewcomment.gno
+			order by no desc
+  		]]>
+  	</select>
+  	
+  	<!--Goods paging  -->
+  	<select id="getListWithGoodsPaging" resultType="kr.parkingq.domain.reviewboard.ReviewBoardVO">
+  		<![CDATA[
+  			select reviewboard.no, CASE WHEN length(reviewboard.content)>70 THEN lpad(reviewboard.content, 70)
+  			 else reviewboard.content END  ||CASE WHEN length(reviewboard.content)>70 THEN ' ...' else null END content_close,
+  			reviewboard.content content,commentcount commentcount,
+  			lpad(reviewboard.id,3)||rpad('*',length(reviewboard.id)-3,'*') id,reviewboard.id realId,
+  			 reviewboard.title, reviewboard.rdate ,nvl(reviewlike.rlike,0) goods,
+  			 reviewfile.rfile rfile,(select count(no) as userLike from reviewlike 
+  			 where no=reviewboard.no and id like #{id} group by no) usergoods,
+             nvl(reviewscore.avg, 0) avg, nvl(reviewscore.appavg, 0) appavg, 
+             nvl(reviewscore.goodavg, 0) goodavg, nvl(reviewscore.reavg, 0) reavg
+			from 
+			    ( select * from 
+			        ( select rownum as rnum, X.* from 
+			            (select reviewboard.no, nvl(reviewlike.count, 0) rlike
+                             from (select no
+                                 from reviewboard) reviewboard 
+                             left join (select no, count(no) count 
+                                 from reviewlike group by no) reviewlike
+                             on reviewboard.no = reviewlike.no
+                             order by rlike desc, no desc) X
+			          where rownum <= #{pageNum}*#{amount} ) Y
+			    where Y.rnum > (#{pageNum}-1)*#{amount} ) reviewlike
+			left join (select * from reviewboard) reviewboard
+			on reviewboard.no = reviewlike.no
+			left join (select no, avg, appavg, goodavg, reavg from reviewscore) reviewscore
+            on reviewboard.no = reviewscore.no
+			left join reviewfile reviewfile
+            on reviewboard.no = reviewfile.no
+            left join (select gno, count(no) as commentcount from reviewcomment group by gno)  reviewcomment
+            on reviewboard.no = reviewcomment.gno
+			order by rlike desc, no desc
+  		]]>
+  	</select>
+  	
+  		<!-- High star paging  -->
+  	<select id="getListWithHighStarPaging" resultType="kr.parkingq.domain.reviewboard.ReviewBoardVO">
+  		<![CDATA[
+  			select reviewboard.no, CASE WHEN length(reviewboard.content)>70 THEN lpad(reviewboard.content, 70) else reviewboard.content END  ||
+  			CASE WHEN length(reviewboard.content)>70 THEN ' ...' else null END content_close,
+  			reviewboard.content content,commentcount commentcount,
+  			lpad(reviewboard.id,3)||rpad('*',length(reviewboard.id)-3,'*') id,reviewboard.id realId,
+  			 reviewboard.title, reviewboard.rdate ,nvl(reviewlike.rlike,0) goods,
+  			 reviewfile.rfile rfile,(select count(no) as userLike from reviewlike 
+  			 where no=reviewboard.no and id like #{id} group by no) usergoods,
+             nvl(reviewscore.avg, 0) avg, nvl(reviewscore.appavg, 0) appavg, 
+             nvl(reviewscore.goodavg, 0) goodavg, nvl(reviewscore.reavg, 0) reavg 
+             from 
+			    ( select * from(    
+               select rownum as rnum, X.* from 
+			           (select reviewboard.no, nvl(reviewscore.avg, 0) avg, appavg, goodavg, reavg
+                        from (select no from reviewboard) reviewboard left join (select no, avg, appavg, goodavg, reavg from reviewscore) reviewscore
+                        on reviewboard.no = reviewscore.no
+                        order by avg desc, no desc) X
+			          where rownum <= #{pageNum}*#{amount}) Y
+			    where Y.rnum > (#{pageNum}-1)*#{amount}) reviewscore    
+			left join (select * from reviewboard) reviewboard
+			on reviewboard.no = reviewscore.no
+			left join reviewfile reviewfile
+            on reviewboard.no = reviewfile.no
+            left join (select no, count(no) as rlike from reviewlike group by no) reviewlike
+			on reviewboard.no = reviewlike.no
+			left join (select gno, count(no) as commentcount from reviewcomment group by gno)  reviewcomment
+            on reviewboard.no = reviewcomment.gno
+			order by avg desc, no desc
+  		]]>
+  	</select>
+  	
+  	<!-- Low Star paging  -->
+  	<select id="getListWithLowStarPaging" resultType="kr.parkingq.domain.reviewboard.ReviewBoardVO">
+  		<![CDATA[
+  			select reviewboard.no, CASE WHEN length(reviewboard.content)>70 THEN lpad(reviewboard.content, 70) else reviewboard.content END  ||
+  			CASE WHEN length(reviewboard.content)>70 THEN ' ...' else null END content_close,
+  			reviewboard.content content,commentcount commentcount,
+  			lpad(reviewboard.id,3)||rpad('*',length(reviewboard.id)-3,'*') id,reviewboard.id realId,
+  			 reviewboard.title, reviewboard.rdate ,nvl(reviewlike.rlike,0) goods,
+  			 reviewfile.rfile rfile,(select count(no) as userLike from reviewlike 
+  			 where no=reviewboard.no and id like #{id} group by no) usergoods,
+             nvl(reviewscore.avg, 0) avg, nvl(reviewscore.appavg, 0) appavg, 
+             nvl(reviewscore.goodavg, 0) goodavg, nvl(reviewscore.reavg, 0) reavg 
+             from 
+			    ( select * from(    
+               select rownum as rnum, X.* from 
+			           (select reviewboard.no, nvl(reviewscore.avg, 0) avg, appavg, goodavg, reavg
+                        from (select no from reviewboard) reviewboard left join (select no, avg, appavg, goodavg, reavg from reviewscore) reviewscore
+                        on reviewboard.no = reviewscore.no
+                        order by avg asc, no desc) X
+			          where rownum <= #{pageNum}*#{amount}) Y
+			    where Y.rnum > (#{pageNum}-1)*#{amount}) reviewscore    
+			left join (select * from reviewboard) reviewboard
+			on reviewboard.no = reviewscore.no
+			left join reviewfile reviewfile
+            on reviewboard.no = reviewfile.no
+            left join (select no, count(no) as rlike from reviewlike group by no) reviewlike
+			on reviewboard.no = reviewlike.no
+			left join (select gno, count(no) as commentcount from reviewcomment group by gno)  reviewcomment
+            on reviewboard.no = reviewcomment.gno
+			order by avg asc, no desc
+  		]]>
+  	</select>
+  	
+  	
+  	<!--모든 게시물 개수  -->
+  	<select id="getTotalCount" resultType="int">
+  		select count(*) from reviewboard where no>0
+  	</select>
+  
+  	<!--좋아요 개수  -->
+  	<select id="getGoodsCount" resultType="int">
+  		select count(id) from reviewlike where no=#{no} group by no
+  	</select>
+  	
+  	<!--좋아요 추가  -->
+  	<update id="addGoods">
+  		insert into reviewlike(likeno, no, id) values(rev_board.nextval, #{no}, #{id})
+  	</update>
+  	
+  	<!--좋아요 삭제  -->
+  	<update id="cancleGoods">
+  		delete from reviewlike where no=#{no} and id like '#{id}'
+  	</update>
+  	
+  	<select id="getComment" resultType="int">
+  		select count(no) as commentcount from reviewcomment where gno=#{no} group by gno
+  	</select>
+  	
+  </mapper>

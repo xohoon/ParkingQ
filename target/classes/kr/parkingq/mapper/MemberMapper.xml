@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.parkingq.mapper.MemberMapper">
+
+    <!-- member id check -->
+    <select id="checkMemberId" resultType="String">
+        select id from member where id = #{id}
+    </select>
+
+    <!-- get member pass -->
+    <select id="getMemberPass" resultType="String">
+        select pass from member where id = #{id}
+    </select>
+
+    <!-- get member nick-->
+    <select id="getMemberNick" resultType="String">
+        select nick from member where id = #{id}
+    </select>
+
+    <!-- member pass check -->
+    <select id="checkMemberPass" resultType="String">
+        select id from member where pass = #{pass}
+    </select>
+
+    <!-- member nick check -->
+    <select id="checkMemberNick" resultType="String">
+        select nick from member where nick = #{nick}
+    </select>
+
+    <!-- member email check -->
+    <select id="checkMemberEmail" resultType="String">
+        select email from member where email = #{email}
+    </select>
+    
+    <!-- member Id and Pass check -->
+    <select id="checkIdPass" resultType="String">
+    	select id from member where id=#{id} and pass=#{pass}
+    </select>
+    
+    <!-- check Password -->
+	<select id="checkPassword" resultType="String">
+		select pass from member where id=#{id} and pass=#{pass}
+	</select>    
+
+	<!-- update Password -->
+	<update id="changePassword">
+		update member set pass=#{pass} where id=#{id}
+	</update>
+
+    <!-- member join process-->
+    <insert id="joinMember">
+        <selectKey keyProperty="no" order="BEFORE" resultType="long">
+			select seq_member.nextval from dual
+		</selectKey>
+        insert into member(no, type, id, pass, nick, email, mdate) 
+        values(#{no}, 'normal', #{id}, #{pass}, #{nick}, #{email}, sysdate)
+    </insert>
+
+    <!-- register Auth-->
+    <insert id="registerAuth">
+        <selectKey keyProperty="no" order="BEFORE" resultType="long">
+            select seq_auth.nextval from dual
+        </selectKey>
+        insert into auth(no, id, type) values(#{no}, #{id}, 'normal')
+    </insert>
+
+    <!-- register ConnectLog -->
+    <insert id="registerConnectLog">
+        <selectKey keyProperty="no" order="BEFORE" resultType="long">
+            select seq_connectlog.nextval from dual
+        </selectKey>
+        insert into connectlog(no, id, cdate) values(#{no}, #{id}, sysdate)
+    </insert>
+
+
+    <!-- register Profile -->
+    <insert id="registerProfile">
+        <selectKey keyProperty="no" order="BEFORE" resultType="long">
+            select seq_profile.nextval from dual
+        </selectKey>
+        insert into profile(no, id, pfile) values(#{no}, #{id}, 'default.gif')
+    </insert>
+
+    <!-- register Visit -->
+    <insert id="registerVisit">
+        <selectKey keyProperty="no" order="BEFORE" resultType="long">
+            select seq_visit.nextval from dual
+        </selectKey>
+        insert into visit(no, id, vdate) values(#{no}, #{id}, sysdate)
+    </insert>
+
+    <!-- update ConnectLog -->
+    <update id="updateConnectLog">
+        update connectlog set cdate = sysdate where id = #{id}
+    </update>
+
+    <!-- update Logout ConnectLog -->
+    <update id="updateLogoutConnectLog">
+        update connectlog set cdate = sysdate-1/24/30 where id = #{id}
+    </update>
+
+    <!-- get Connect User List -->
+    <select id="getConnectList" resultType="kr.parkingq.domain.member.ConnectLogVO">
+        select id from connectlog where cdate between sysdate-1/24/60 and sysdate
+    </select>
+    
+    <!-- get Member Infomation -->
+    <select id="getMemberInfo" resultType="kr.parkingq.domain.member.MemberVO">
+    	select member.*, profile.pfile from member
+		join profile
+		on member.id = profile.id
+		where member.id=#{id}
+    </select>
+    
+    <!-- update Member Infomation -->
+    <update id="updateMemberInfo">
+    	update member set nick = #{nick} where id=#{id}
+    </update>
+    
+    <!-- update Member Profile Image -->
+    <update id="updateProfile">
+    	update profile set pfile = #{pfile} where id=#{id}
+    </update>
+    
+    <select id="getProfile" resultType="String">
+    	select pfile from profile where id = #{id}
+    </select>
+    
+    <!-- insert Qr code -->
+    <insert id="registerQr">
+   		 <selectKey keyProperty="no" order="BEFORE" resultType="long">
+         	select seq_qr.nextval from dual
+        </selectKey>
+    	insert into qr(no, id, key)
+    	values(#{no}, #{id}, #{key})
+    </insert>
+
+	<!-- get All Qr code info -->
+	<select id="getQr" resultType="kr.parkingq.domain.member.QrVO">
+		select no, id, key from qr order by no
+	</select>
+	
+	<select id="getQrById" resultType="String">
+		select key from qr where id=#{id}
+	</select>
+	
+	<update id="changeQrById">
+		update qr set key=#{key} where id=#{id} 
+	</update>
+	
+	<insert id="applyFriend">
+		insert all
+ 		into friend(no,id,fId,request) values(seq_friend.nextval, #{id}, #{fId}, 1)
+ 		into friend(no,id,fId,request) values(seq_friend.nextval, #{fId}, #{id}, 0)
+ 		select * from dual
+	</insert>
+	
+	<update id="acceptFriend">
+		update friend
+		set request=1 where id=#{id} and fId=#{fId} and request=0
+	</update>
+	
+	<delete id="refuseFriend">
+		 delete from friend 
+		 where ( id=#{id} and fid=#{fId} ) or ( id=#{fId} and fId=#{id} )
+	</delete>
+	
+	<select id="checkFriendStatus" resultType="int">
+		select count(*) as statusCount from friend 
+		where ( id = #{id} and fId=#{fId} and request=1 ) or ( id =#{fId} and fId=#{id} and request=1 )
+	</select>
+	
+	
+	<select id="getFriendList" resultType="kr.parkingq.domain.member.FriendVO">
+		select friend.*, profile.pfile from 
+		( select * from friend where id =#{id} and request=1 ) friend
+		join profile
+		on friend.fid = profile.id
+	</select>
+	
+	<select id="getFriendRequest" parameterType="hashmap" resultType="String">
+		select request from friend where id = #{fId} and fid =#{id} and request=1
+	</select>
+	
+	<select id="getConnectTime" resultType="String">
+		select to_char(cdate, 'yyyy-mm-dd HH24:MI') as cdate from connectlog where id = #{userId}
+	</select>
+	
+	
+	<select id="getVisitCount" resultType="int">
+		select count(*) from visit where id=#{id}
+	</select>
+	
+	<select id="getFreeboardCount" resultType="int">
+		select count(*) from freeboard where id=#{id}
+	</select>
+	
+	<select id="getMeetboardCount" resultType="int">
+		select count(*) from meetboard where id=#{id}
+	</select>
+	
+	<select id="getInfoboardCount" resultType="int">
+		select count(*) from infoboard where id=#{id}
+	</select>
+	
+	<select id="getReviewboardCount" resultType="int">
+		select count(*) from reviewboard where id=#{id}
+	</select>
+	
+	
+	<select id="getFreecommentCount" resultType="int">
+		select count(*) from freecomment where id=#{id}
+	</select>
+	
+	<select id="getMeetcommentCount" resultType="int">
+		select count(*) from groupcomment where id=#{id}
+	</select>
+	
+	<select id="getInfocommentCount" resultType="int">
+		select count(*) from infocomment where id=#{id}
+	</select>
+	
+	<select id="getReviewcommentCount" resultType="int">
+		select count(*) from reviewcomment where id=#{id}
+	</select>
+	
+	
+	<select id="getFriendNews" resultType="kr.parkingq.domain.admin.AlarmVO">
+		select * from 
+			( select alarm.ano, alarm.id, alarm.type, alarm.subject,
+			to_char(alarm.adate,'YYYY-MM-DD') as adate, profile.pfile as afile from alarm
+			join profile
+			on alarm.id = profile.id
+			where alarm.id in ( select friend.fid from friend where id=#{id} and request=1 )
+         	order by alarm.adate desc
+			) 
+		<![CDATA[
+		where rownum <=4
+		]]>
+		
+	</select>
+	
+	
+	<select id="getConntectUserImage" resultType="kr.parkingq.domain.member.ConnectLogVO">
+		select connectlog.id, profile.pfile from 
+			( select * from connectlog where cdate between sysdate-1/24/60 and sysdate ) connectlog
+		left join profile
+		on connectlog.id = profile.id
+	</select>
+	
+	
+	
+	
+	
+</mapper>

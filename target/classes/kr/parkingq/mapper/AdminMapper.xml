@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.parkingq.mapper.AdminMapper">
+
+
+	<select id="getMember" resultType="kr.parkingq.domain.admin.AdminMemberVO">
+		select member.no, member.id, member.pass, member.nick, member.email, qr.key, auth.type from
+		member left join qr
+		on member.id = qr.id
+		left join auth
+		on member.id = auth.id
+		order by member.no asc
+	</select>
+	
+	<update id="updateAuth">
+		update auth set type=#{type} where id=#{id}
+	</update>
+	
+	<select id="getAuth" resultType="String">
+		select type from auth where id = ${id}
+	</select>
+	
+	<delete id="deleteUser">
+		delete from member where id = #{id}	
+	</delete>
+	
+	<select id="getMemberInfo" resultType="kr.parkingq.domain.admin.AdminMemberVO">
+		select member.id, member.pass, member.nick, member.email, to_char(member.mdate,'yyyy-mm-dd') as mdate , qr.key from 
+		member join qr
+		on member.id = qr.id
+		where member.id=#{id}
+	</select>
+	
+	<update id="updateMember">
+		update member set pass=#{pass}, nick=#{nick}, email=#{email} where id=#{id}
+	</update>
+	
+	<select id="getWeekCountMember" resultType="int">
+		select count(*) from member where mdate between sysdate-6 and sysdate
+	</select>
+	
+	<select id="getAllMessage" resultType="kr.parkingq.domain.message.MessageVO">
+		select no, roomid, id, toid, content, read, to_char(mdate, 'YYYY-MM-DD') as mDate from message where type = 'normal' order by no desc
+	</select>
+	
+	<select id="getMessageTotalCount" resultType="int">
+		select count(*) as count from message  where mdate between sysdate-6 and sysdate
+	</select>
+	
+	<delete id="deleteMessage">
+		delete from message where no = #{no}
+	</delete>
+	
+	<select id="getAllBoard" resultType="kr.parkingq.domain.admin.AlarmVO">
+		select no, ano, id, type, subject, to_char(adate,'YYYY-MM-DD') as adate  from alarm
+		order by no desc
+	</select>
+	
+	<select id="getBoardCount" resultType="int">
+		select count(*) as count from alarm  where adate between sysdate-6 and sysdate
+	</select>
+	
+	<select id="getBoard" resultType="kr.parkingq.domain.admin.AlarmVO">
+		select no as ano, id, nick, title as subject , content,
+		<choose>
+			<when test="type != null and type.equals('freeboard')">
+				to_char(fdate,'YYYY-MM-DD') as adate
+			</when>
+			<when test="type != null and type.equals('meetboard')">
+				to_char(mdate,'YYYY-MM-DD') as adate
+			</when>
+			<when test="type != null and type.equals('infoboard')">
+				to_char(idate,'YYYY-MM-DD') as adate
+			</when>
+			<when test="type != null and type.equals('reviewboard')">
+				to_char(rdate,'YYYY-MM-DD') as adate
+			</when>
+		</choose>
+		from 
+		<choose>
+			<when test="type != null and type.equals('freeboard')">
+				freeboard
+			</when>
+			<when test="type != null and type.equals('meetboard')">
+				meetboard
+			</when>
+			<when test="type != null and type.equals('infoboard')">
+				infoboard
+			</when>
+			<when test="type != null and type.equals('reviewboard')">
+				reviewboard
+			</when>
+		</choose>
+		
+		where no = #{ano}
+	</select>
+	
+	<update id="updateBoard">
+		update 
+		
+		<choose>
+			<when test="type != null and type.equals('freeboard')">
+				freeboard
+			</when>
+			<when test="type != null and type.equals('meetboard')">
+				meetboard
+			</when>
+			<when test="type != null and type.equals('infoboard')">
+				infoboard
+			</when>
+			<when test="type != null and type.equals('reviewboard')">
+				reviewboard
+			</when>
+		</choose>
+		
+	 	set title=#{subject} , content = #{content} 
+	 	where no = #{no}
+	</update>
+	
+	<update id="updateAdminBoard">
+		update alarm
+		 set subject=#{subject}  
+		 where ano = #{no} and type = #{type}
+	</update>
+	
+	<delete id="deleteBoard">
+		delete from 
+		<choose>
+			<when test="type != null and type.equals('freeboard')">
+				freeboard
+			</when>
+			<when test="type != null and type.equals('meetboard')">
+				meetboard
+			</when>
+			<when test="type != null and type.equals('infoboard')">
+				infoboard
+			</when>
+			<when test="type != null and type.equals('reviewboard')">
+				reviewboard
+			</when>
+		</choose>
+		where no = #{ano}
+	</delete>
+	
+	<delete id="deleteAdminBoard">
+		delete from alarm where ano = #{ano} and type=#{type}
+	</delete>
+	
+	<select id="getLimitMember" resultType="kr.parkingq.domain.admin.AdminMemberVO">
+		select member.*, qr.key from 
+		( select * from member order by no desc ) member
+		join qr
+		on member.id = qr.id
+		<![CDATA[
+		where rownum <= 5
+		]]>
+	</select>
+	
+	<select id="getLimitMessage" resultType="kr.parkingq.domain.message.MessageVO">
+		select * from 
+		( select * from message order by no desc )
+		<![CDATA[
+		where rownum <= 5
+		]]>
+	</select>
+	
+	<select id="getLimitAlarm" resultType="kr.parkingq.domain.admin.AlarmVO">
+		select * from 
+		( select * from alarm order by no desc )
+		<![CDATA[
+		where rownum <= 5
+		]]>
+	</select>
+	
+	<!-- add dongJune's main  -->
+	<select id="getMainLimitAlarm" resultType="kr.parkingq.domain.admin.AlarmVO">
+		<![CDATA[
+		select no, CASE WHEN length(subject)>15 then lpad(subject, 15) else subject end ||
+                    case when length(subject)>15 then '...' else null end subject
+        from 
+		( select * from alarm order by no desc )
+		where rownum <= 5
+		]]>
+	</select>
+	
+	<select id="getBoardChart" resultType="kr.parkingq.domain.admin.ChartVO">
+		select 
+			(select count(*) from freeboard) freecount,
+			(select count(*) from meetboard) meetcount, 
+			(select count(*) from infoboard) infocount, 
+			(select count(*) from reviewboard) reviewcount 
+		from dual
+	</select>
+	
+	<select id="getMemberChart" resultType="kr.parkingq.domain.admin.ChartVO">
+		select visit.vdate as tdate, visit.vcount as visitcount, nvl(member.count,0) as membercount, nvl(message.count,0) as messagecount from 
+			( select to_char(vdate,'yyyy, mm, dd') as vdate, count(*) as vcount from visit
+			where vdate between sysdate-6 and sysdate 
+			group by to_char(vdate,'yyyy, mm, dd') 
+			order by vdate desc )visit 
+			left join
+			( select count(*) as count, to_char(mdate,'yyyy, mm, dd')as mdate from member
+			group by to_char(mdate,'yyyy, mm, dd')
+			order by mdate ) member
+			on visit.vdate = member.mdate
+			left join
+			( select count(*) as count, to_char(mdate,'yyyy, mm, dd')as mdate from message
+		group by to_char(mdate,'yyyy, mm, dd')
+		order by mdate ) message
+		on visit.vdate = message.mdate
+		order by visit.vdate asc
+	</select>
+	
+	<select id="getCheckAdmin" resultType="String">
+		select type from auth where id = #{userId}
+	</select>
+	
+	
+</mapper>

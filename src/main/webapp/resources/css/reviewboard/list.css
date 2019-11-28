@@ -1,0 +1,762 @@
+@charset "UTF-8";
+
+/* #reviewboard_File{
+	display:block !important;
+} */
+/*-==========================================================위에는 모달  */
+#page_h{
+    width: 400px;
+    height:auto;
+    margin: 0 auto;
+    overflow: hidden;
+}
+.page_header_img{
+	position:static;
+	width:100%;
+	height: auto;
+	overflow: hidden;
+}
+
+/*start 윗차트  */
+#chart{
+	border: 1px solid #e5e5e5;
+    padding: 5% 1%;
+    margin: 20px 0;
+    display: inline-block;
+    width: 100%;
+    background-color: #fcfcff;
+}
+#chart>h3{
+	font-weight: 700;
+    display: inline-block;
+    float: left;
+    margin-left : 10px;
+}
+/*chart 안의 별점  */
+#main_star_frame{
+    width: 150px;
+    height: 30px;
+    display: inline-block;
+    float: left;
+    margin-left: 10px;
+}
+#chart>span{
+	font-size:11px;
+    display: inline-block;
+    float: left;
+    line-height: 45px;
+    margin-left: 10px;
+}
+#main_star{
+width: 150px;
+    height: 30px;
+    overflow: hidden;
+    display: inline-block;
+}
+.main_star{
+	width: 100%;
+    height: 30px;
+    overflow: hidden;
+    display: inline-block;
+}
+.star_image{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 2;
+}
+.star_image_progress{
+    position: relative;
+    top: -30px;
+    width: 0%;
+    height: 30px;
+    display: inline-block;
+    background-color: #ffc107;
+    z-index: 1;
+}
+/* end 별점  */
+
+.chart_table{
+	width: 33%;
+    float: left;
+    margin-top : 30px;
+}
+.chart_table>tbody>tr{
+    padding-left: 10px;
+}
+.chart_table>thead>tr>td{
+	padding-left: 35px;
+	font-size: 12px;
+	font-weight: 600;
+}
+.chart_table>tbody>tr>td{
+	    width: 69%;
+}
+.chart_table>tbody>tr>.chart_text{
+	padding-left: 11px;
+	font-size: 14px;
+}
+/*end 윗차트  */
+
+
+
+/*글쓰기 버튼  */
+#reg_button:hover{
+	background-color: #eee;
+	border:0.5px solid buttonface;
+}
+.delete_button:hover{
+	background-color: #eee;
+	border:0.5px solid buttonface;
+}
+
+/*==========================================================================이  */
+	
+
+
+/* review라는 테이블 위에 있는 글자 */
+.job {
+	width: 200px;
+    height: 30px;
+    color: #999;
+    padding-top: 20px;
+}
+.job>h4{
+	margin-bottom: 0;
+}
+#hr1{
+	margin-top: 20px;	
+}
+
+.write_img{
+	display:inline-block;
+	position:relative;
+	width: 30px;
+	height: 30px;
+}
+
+/* review라는 테이블 위에 있는 글자 */
+.job>h3 {
+	display: block;
+	line-height: 57px;
+}
+
+
+/* 전체 / 좋아요 정렬  */
+#table_head>.goods {
+	border: 1px solid #D7D5D5;
+	float: right;
+	width: 90px;
+	text-align: center;
+	color: #444;
+	font-weight: bold;
+	font-size : 80%;
+	cursor: pointer;
+}
+#table_head>.goods:hover{
+	background-color: #107CEF;
+	color:#ffffff;
+	border: 1px solid #D7D5D5;
+	float: right;
+	width: 90px;
+	text-align: center;
+	font-weight: normal;
+	font-size : 80%;
+	cursor: pointer;
+	opacity: 0.4;
+}
+/* goods가 선택되었을 때  */
+.selected{
+	background-color: #107CEF;
+	color:#ffffff;
+	border: 1px solid #107CEF;
+	float: right;
+	width: 90px;
+	text-align: center;
+	font-weight: bolder;
+	font-size : 90%;
+	cursor: pointer;
+}
+
+#modal_reset{
+	float:right;
+	margin-left: 10px;
+}
+#modal_submit{
+	float:right;
+}
+#counterTitle{ 
+    position: absolute;
+    bottom: 320px;
+    right: 20px;
+    border-radius: 0.5em;
+    padding: 0 .5em 0 .5em;
+    font-size: 0.75em;
+}
+#counter { 
+  position: absolute;
+  bottom: 70px;
+  right: 25px;
+  border-radius: 0.5em;
+  padding: 0 .5em 0 .5em;
+  font-size: 0.75em;
+}
+.counterComment{
+    margin-left: 10px;
+    font-size: 80%;
+}
+.replyP{
+	 word-break: break-all;
+	 word-wrap: break-word;
+}
+
+/*==========================================================================아래부터 펼치기 전의 게시글  */
+
+
+/*게시물내용 전체를 감싸는 곳  */
+/* .reviewContent_close {
+	cursor: pointer;
+} */
+
+/* 게시물의 내용이 들어가는 곳   */
+.reviewContent_body_close {
+	width: 100%;
+	overflow: hidden;
+	height: auto;
+}
+.purchur{
+	color:#222;
+}
+.purchur:hover{
+	text-decoration: none;
+	color:#000;
+	font-weight: bold;
+}
+
+
+/* 별점, 사진이 들어가는 곳 */
+.review_left_close {
+	
+	width: 11%;
+	height: 30px;
+	float: left;
+	margin-left: 2%;
+    margin-top: 2.5%;
+}
+
+/* 별점  */
+.reviewContent_close>.reviewContent_body_close>.review_left_close>.review_left_star_close {
+	
+	width: 100%;
+    height: 30px;
+    display: inline-block;
+}
+
+.reviewContent_close>.reviewContent_body_close>.review_left_close>
+.review_left_star_close>.star_image_board{
+position: relative;
+    top: -30px;
+    width: 70%;
+    height: 30px;
+    display: inline-block;
+    background-color: #ffc107;
+    z-index: 1;
+}
+/*  사진 */
+.reviewContent_close>.reviewContent_body_close>.review_left_close>.review_left_picture_close {
+	display:none;
+	width: 100%;
+	height: 80px;
+	overflow: hidden;
+}
+/* 사진이 들어가는 img */
+.reviewContent_close>.reviewContent_body_close>.review_left_close>.review_left_picture_close .picture_close{
+	position: static;
+	width: 100%;
+	height: 100%;
+}
+
+/* 제목 란 */ 
+.reviewContent_close>.reviewContent_body_close>.review_center_close>.review_center_title_close {
+	width: 100%;
+    height: 20px;
+    color: #222;
+    font-size: 100%;
+    font-weight: bold;
+}
+
+
+/* 제목, 글내용이 들어가는 곳 */ 
+.reviewContent_close>.reviewContent_body_close>.review_center_close {
+	margin-left: 5%;
+    width: 55%;
+    height: auto;
+    float: left;
+    margin-top: 2%;
+}
+.reviewContent_close>.reviewContent_body_close>.review_center_close>.review_center_star_close{
+	display: none;
+}
+/* 센터 박스에 들어갈 게시물 내용  */
+.reviewContent_close>.reviewContent_body_close>.review_center_close>.review_center_content_close
+	{
+	width: 100%;
+	height: auto;
+	color: #222;
+	font-size: 80%;
+	line-height: 15px;
+	padding-top: 8px;
+	
+}
+
+.reviewContent_close>.reviewContent_body_close>.review_center_close>.review_center_content{
+	display: none;
+	
+}
+
+/* 삭제버튼 */
+.reviewContent_close>.reviewContent_body_close>.delete_button{
+   width:60px;
+   margin-top:5px;
+   margin-left : 20px;
+   
+}
+
+/* 평가 점수, 아이디, 날짜, 좋아요가 들어가는 곳 */ 
+.reviewContent_close>.reviewContent_body_close>.review_right_close {
+	width: 20%;
+	height: auto;
+	float: right;
+	font-weight: normal;
+	font-size: 11px;
+	text-align: center;
+}
+
+
+/* 평가 그림 3개가 들어가는 곳 */ 
+.reviewContent_close>.reviewContent_body_close>.review_right_close>.review_right_appraisal_close
+	{
+	width: 100%;
+	height: 40px;
+}
+
+/* 각각의 평가그림이 들어가는 곳  */
+.reviewContent_close>.reviewContent_body_close>.review_right_close>.review_right_appraisal_close>div
+	{
+	width: 33%;
+	height: auto;
+	overflow:hidden;
+	float: left;
+}
+
+.score_img{
+width: 50%;
+    height: auto;
+    position: relative;
+    z-index: 2;
+}
+/* 평가 백분율이 들어가는 곳 */ 
+.reviewContent_close>.reviewContent_body_close>.review_right_close>.review_right_percent_close {
+	width: 100%;
+	height: 15px;
+}
+
+/* 아이디와 날짜가 들억나는 곳  */
+.reviewContent_close>.reviewContent_body_close>.review_right_close>.review_right_IdDate_close {
+	width: 100%;
+	height: 15px;
+	text-align: center;
+	
+}
+
+/*  좋아요가 들어가는 곳 */
+.reviewContent_close>.reviewContent_body_close>.review_right_close>.No_goods_color{
+	border: 1px solid #DB1E1E;
+	margin: 3px auto 0 auto;
+	font-weight: bold;
+	line-height: 25px;
+	width: 70px;
+	height: 27px;
+	color: #ddd;
+	background-color: #DB1E1E;
+	cursor: pointer;
+	border-radius: 5px 5px;
+}
+.reviewContent_close>.reviewContent_body_close>.review_right_close>.No_goods_color:hover{
+	border: 1px solid #B10707;
+	margin: 3px auto 0 auto;
+	font-weight: bold;
+	line-height: 25px;
+	width: 70px;
+	height: 27px;
+	color: #ddd;
+	background-color: #B10707;
+	cursor: pointer;
+	border-radius: 5px 5px;
+}
+.reviewContent>.reviewContent_body>.review_right>.No_goods_color{
+	
+	border: 1px solid #DB1E1E;
+	margin: 3px auto 0 auto;
+	font-weight: bold;
+	line-height: 25px;
+	width: 70px;
+	height: 27px;
+	color: #ddd;
+	background-color: #DB1E1E;
+	cursor: pointer;
+	border-radius: 5px 5px;
+	
+	text-align:center;
+	margin-top:1%;
+	margin-right : 2%;
+	font-size:12px;
+	float: right;
+}
+.reviewContent>.reviewContent_body>.review_right>.No_goods_color:hover{
+	
+	border: 1px solid #B10707;
+	margin: 3px auto 0 auto;
+	font-weight: bold;
+	line-height: 25px;
+	width: 70px;
+	height: 27px;
+	color: #ddd;
+	background-color: #B10707;
+	cursor: pointer;
+	border-radius: 5px 5px;
+	
+	text-align:center;
+	margin-top:1%;
+	margin-right : 2%;
+	font-size:12px;
+	float: right;
+}
+.reviewContent_close>.reviewContent_body_close>.review_right_close>.Yes_goods_color{
+	border: 1px solid #2E9AFE;
+	margin: 3px auto 0 auto;
+	font-weight: bold;
+	line-height: 25px;
+	width: 70px;
+	height: 27px;
+	color: #ddd;
+	background-color: #2E9AFE;
+	cursor: pointer;
+	border-radius: 5px 5px;
+}
+.reviewContent_close>.reviewContent_body_close>.review_right_close>.Yes_goods_color:hover{
+	border: 1px solid #0A59C7;
+	margin: 3px auto 0 auto;
+	font-weight: bold;
+	line-height: 25px;
+	width: 70px;
+	height: 27px;
+	color: #ddd;
+	background-color: #0A59C7;
+	cursor: pointer;
+	border-radius: 5px 5px;
+}
+.reviewContent>.reviewContent_body>.review_right>.Yes_goods_color{
+	border: 1px solid #2E9AFE;
+	margin: 3px auto 0 auto;
+	font-weight: bold;
+	line-height: 25px;
+	width: 70px;
+	height: 27px;
+	color: #ddd;
+	background-color: #2E9AFE;
+	cursor: pointer;
+	border-radius: 5px 5px;
+	
+	text-align:center;
+	margin-top:1%;
+	margin-right : 2%;
+	font-size:12px;
+	float: right;
+}
+.reviewContent>.reviewContent_body>.review_right>.Yes_goods_color:hover{
+	border: 1px solid #0A59C7;
+	margin: 3px auto 0 auto;
+	font-weight: bold;
+	line-height: 25px;
+	width: 70px;
+	height: 27px;
+	color: #ddd;
+	background-color: #0A59C7;
+	cursor: pointer;
+	border-radius: 5px 5px;
+	
+	text-align:center;
+	margin-top:1%;
+	margin-right : 2%;
+	font-size:12px;
+	float: right;
+}
+/*======================================================================아래는 바꿔야 될 곳  */
+.reviewContent<.table_body_tr{
+	overflow: hidden;
+	height: auto;
+}
+
+
+/* 펼쳐보기를 한 이후의 게시물내용을 감싸는 곳  */
+.reviewContent {
+	cursor: auto;
+	
+}
+
+
+
+/* 게시물의 내용이 들어가는 곳   */
+.reviewContent_body {
+	margin: 3px auto;
+	width: 100%;
+	overflow: hidden;
+	height: auto;
+}
+
+
+/* 펼쳐보기 이후의 별점, 사진이 들어가는 곳 */
+.reviewContent>.reviewContent_body>.review_left{
+	width: 30%;
+	height: 300px;
+	float: left;
+}
+
+/* 별점  */
+.reviewContent>.reviewContent_body>.review_left>.review_left_star {
+	display:none;
+}
+
+
+/*  사진 */
+.reviewContent>.reviewContent_body>.review_left>.review_left_picture {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+/* 사진이 들어가는 img */
+.reviewContent>.reviewContent_body>.review_left>.review_left_picture .picture{
+	position: static;
+	width: 100%;
+	height: 100%;
+}
+
+
+/* 제목, 글내용이 들어가는 곳  */
+.reviewContent>.reviewContent_body>.review_center {
+	margin-left: 0.5%;
+	width: 63%;
+	overflow:hidden;
+	height: auto;
+	float: left;
+}
+
+/* 제목 란  */
+.reviewContent>.reviewContent_body>.review_center>.review_center_title {
+	width: 100%;
+	height: 20px;
+	color: #222;
+	font-size: 14px;
+	font-weight: bold;
+	margin-left: 10px;
+}
+/* 센터박스에 별점 */
+.reviewContent>.reviewContent_body>.review_center>.review_center_star{
+	width: 23%;
+    height: auto;
+    display: inline-block;
+    margin-left: 1.6%;
+    margin-top: 1%;
+	
+}
+.reviewContent>.reviewContent_body>.review_center>.review_center_star>.star_image{
+	width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+.reviewContent>.reviewContent_body>.review_center>
+.review_center_star>.star_image_board{
+	position: relative;
+    top: -35px;
+    width: 100%;
+    height: 35px;
+    display: inline-block;
+    background-color: #ffff00;
+    z-index: 1;
+}
+
+/* 센터박스에 게시물 내용  */
+.reviewContent>.reviewContent_body>.review_center>.review_center_content
+	{
+/* 	width: 784.188px; */
+	width:100%;
+	
+	overflow:hidden;
+	height: 140px;
+	color: #222;
+	font-size: 13px;
+	line-height: 15px;
+	padding-top: 8px;
+	word-break:break-all;
+	word-wrap:break-word;
+}
+/* ...처리된 게시글 내용  */
+.reviewContent>.reviewContent_body>.review_center>.review_center_content_close{
+	display: none;
+}
+/* 삭제버튼 */
+.reviewContent>.reviewContent_body>.delete_button{
+    margin-top: 10px;
+    float: right;
+    height: 25px;
+    line-height: 10px;
+    font-size: 14px;
+    margin-right: 1%;
+    width: 56px;
+}
+/* 평가 점수, 아이디, 날짜, 좋아요가 들어가는 곳  */
+.reviewContent>.reviewContent_body>.review_right {
+	position: relative;
+    width: 40%;
+    overflow: hidden;
+    height: auto;
+    font-weight: normal;
+    font-size: 15px;
+    float: right;
+}
+
+
+/* 평가 그림 3개가 들어가는 곳  */
+.reviewContent>.reviewContent_body>.review_right>.review_right_appraisal
+	{
+	float: right;
+    width: 100%;
+    height: auto;
+}
+
+/* 각각의 평가그림이 들어가는 곳  */
+.reviewContent>.reviewContent_body>.review_right>.review_right_appraisal>div
+	{
+	width: fit-content;
+    height: auto;
+    float: left;
+}
+.reviewContent>.reviewContent_body>.review_right>.review_right_appraisal>.review_right_appraisal_a{
+	margin-left: 250px;
+
+}
+.reviewContent>.reviewContent_body>.review_right>.review_right_appraisal>div>.score_img{
+	width: 90%;
+    height: auto;
+    position: relative;
+    z-index: 2;
+    float:right;
+    padding-left: 17px;
+}
+
+/* 평가 백분율이 들어가는 곳  */
+.reviewContent>.reviewContent_body>.review_right>.review_right_percent {
+	width: 100%;
+	height: 15px;
+	text-align: right;
+	padding-right: 2%;
+}
+
+/* 아이디와 날짜가 들억나는 곳  */
+.reviewContent>.reviewContent_body>.review_right>.review_right_IdDate {
+	width: 100%;
+	height: auto;
+	text-align: right;
+	padding-right: 2%;
+}
+
+
+ /* 좋아요가 들어가는 곳 */
+.reviewContent>.reviewContent_body>.review_right>.review_right_goods {
+	
+}
+
+/* ======================================================================위는 바꿔야 될 곳 */ 
+
+/* ======================================================================밑에부터 댓글*/
+
+/*  댓글 박스 전체 */ 
+.review_final_comment{
+	width: 100%;
+	overflow: hidden;
+	height: auto;
+	padding-top: -1%;
+	display: inline-block;
+}
+
+/*펼쳐보기 전의 댓글 전체  */
+.review_final_comment_close{
+	display: none;
+}
+
+
+/* 댓글 내용물 묶은 전체 */
+.panel-default{
+	width:100%;
+	
+}
+
+/* 댓글textarea, write button */ 
+.ohmygod{	
+	width: 100%;
+	display: inline-block;
+}
+
+/* 댓글쓰는 textarea  */
+textarea.form-control{
+	height:200px;
+}
+
+/* 댓글 쓰기 등록 버튼 */ 
+#addReplyBtn1 {
+	float:right;
+	margin-top : 10px;
+	margin-right : 10px;
+}
+
+/* 댓글 리스트 */ 
+.chat{
+	padding-left:30px;
+}
+
+/* 댓글 페이징  */
+.panel-footer{
+	float:right;
+	margin-right:1%;
+}
+
+/* 펼쳐보기 닫기 버튼 */
+.cancle_Btn{
+	display:inline-block;
+	float:right;
+	margin-right: 1%;
+}
+/* 펼쳐보기 전의 펼쳐보기 닫기 버튼  */
+.cancle_Btn_close{
+	display: none;
+}
+.parking_q_img{
+	width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+	
+}
+.parking_q_id{
+	width: auto;
+    height: 30px;
+    font-size: larger;
+    color: #121;
+}
+.review_center_content{
+	padding:10px;
+}
