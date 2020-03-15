@@ -1,4 +1,4 @@
-# ParkingQ (Team Project)
+# ParkingQ (Team Project, MeetBoard charge)
 * Back-End : Java, JSP, MyBatis
 * Front-End : HTML, CSS, JavaScript, JSON, ajax, jQuery, BootStrap 등
 * API : GoogleMap, DropZone
